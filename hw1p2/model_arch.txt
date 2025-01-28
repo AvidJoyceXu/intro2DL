@@ -1,0 +1,7 @@
+Network(
+  (model): Sequential(
+    (0): Linear(in_features=1708, out_features=512, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=512, out_features=42, bias=True)
+  )
+)
