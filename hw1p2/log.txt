@@ -1,0 +1,3 @@
+nohup: ignoring input
+[NbConvertApp] Converting notebook hw1p2-s25-starter-notebook.ipynb to notebook
+[NbConvertApp] Writing 123430658 bytes to output.ipynb
