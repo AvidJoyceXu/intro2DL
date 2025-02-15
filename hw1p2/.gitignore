@@ -4,3 +4,5 @@ wandb/*
 *.csv
 11785-s25-hw1p2/*
 submissions/*
+ckpt/
+*.zip
