@@ -1,0 +1,38 @@
+ASRModel(
+  (encoder): Encoder(
+    (embedding): Sequential(
+      (0): Conv1d(28, 256, kernel_size=(3,), stride=(1,), padding=(1,))
+      (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Conv1d(256, 256, kernel_size=(3,), stride=(1,), padding=(1,))
+      (4): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU()
+      (6): Conv1d(256, 256, kernel_size=(3,), stride=(1,), padding=(1,))
+      (7): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (8): ReLU()
+    )
+    (BLSTMs): LSTMWrapper(
+      (lstm): LSTM(256, 256, num_layers=2, batch_first=True, bidirectional=True)
+    )
+    (pBLSTMs): Sequential(
+      (0): pBLSTM(
+        (blstm): LSTM(1024, 256, batch_first=True, bidirectional=True)
+      )
+    )
+  )
+  (decoder): Decoder(
+    (mlp): Sequential(
+      (0): Permute()
+      (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): Permute()
+      (3): Linear(in_features=512, out_features=256, bias=True)
+      (4): ReLU()
+      (5): Dropout(p=0.2, inplace=False)
+      (6): Linear(in_features=256, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Dropout(p=0.2, inplace=False)
+      (9): Linear(in_features=128, out_features=41, bias=True)
+    )
+    (softmax): LogSoftmax(dim=2)
+  )
+)

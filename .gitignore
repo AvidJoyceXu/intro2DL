@@ -2,3 +2,4 @@
 *.pth
 *.pyc
 wandb
+data
