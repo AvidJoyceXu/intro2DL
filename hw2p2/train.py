@@ -405,7 +405,7 @@ from torch.hub import load_state_dict_from_url
 # from convnext_model import convnext_785
 # model = convnext_785(num_classes=config['num_classes']).to(DEVICE)
 
-from resnet import ResNet, BasicBlock, Bottleneck
+from hw2p2.Resnet import ResNet, BasicBlock, Bottleneck
 model = ResNet(block=Bottleneck, layers=[3, 4, 6, 3]).to("cuda:0")
 summary(model, (3, 112, 112))
 model = Classifier(model, config['num_classes']).to(DEVICE)
