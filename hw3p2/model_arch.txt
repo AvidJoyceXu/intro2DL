@@ -1,21 +1,24 @@
 ASRModel(
   (encoder): Encoder(
     (embedding): Sequential(
-      (0): Conv1d(28, 256, kernel_size=(3,), stride=(1,), padding=(1,))
-      (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (0): Conv1d(28, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+      (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
       (2): ReLU()
-      (3): Conv1d(256, 256, kernel_size=(3,), stride=(1,), padding=(1,))
-      (4): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+      (4): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
       (5): ReLU()
-      (6): Conv1d(256, 256, kernel_size=(3,), stride=(1,), padding=(1,))
-      (7): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (6): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+      (7): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
       (8): ReLU()
     )
     (BLSTMs): LSTMWrapper(
-      (lstm): LSTM(256, 256, num_layers=2, batch_first=True, bidirectional=True)
+      (lstm): LSTM(512, 256, num_layers=4, batch_first=True, bidirectional=True)
     )
     (pBLSTMs): Sequential(
       (0): pBLSTM(
+        (blstm): LSTM(1024, 256, batch_first=True, bidirectional=True)
+      )
+      (1): pBLSTM(
         (blstm): LSTM(1024, 256, batch_first=True, bidirectional=True)
       )
     )
