@@ -1,0 +1,23 @@
+
+# Subset of dataset to use (1.0 == 100% of data)
+subset: 1.0
+learning_rate: 0.001
+epochs: 200
+train_beam_width: 5
+test_beam_width: 10
+mfcc_features: 28 # DO NOT MODIFY
+
+time_maskings: 10
+freq_maskings: 5
+
+# Set embedding size (the dimensionality of the LSTM hidden state)
+embed_size: 320 # {64,128,256} Try out higher embed_size if you have powerfull GPU(RAM) other than T4
+
+batch_size: 512 # Increase if your device can handle it
+
+encoder dropout: 0.22
+lstm dropout: 0.22
+decoder dropout: 0.22
+wandb: True # Set to True if you want to use WanDB
+
+Name: "Lingyun Xu" # Write your name here
