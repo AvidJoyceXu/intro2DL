@@ -164,8 +164,49 @@ class SequenceGenerator:
         if self.max_length < x.size(1):
             raise ValueError("max_length must be >= input sequence length")
         
-        # TODO: Implement greedy search
-        raise NotImplementedError # Remove once implemented
+        # Initialize scores and finished flag
+        batch_size = x.size(0)
+        scores = torch.zeros(batch_size, device=x.device)
+        finished = torch.zeros(batch_size, dtype=torch.bool, device=x.device)
+        
+        # Create a copy of the input tensor to avoid modifying the original
+        sequences = x.clone()
+        
+        # Generate tokens until max_length or all sequences are finished
+        for _ in range(self.max_length - x.size(1)):
+            # Check if all sequences have finished
+            if finished.all():
+                break
+                
+            # Get logits for next token prediction
+            next_scores = self.score_fn(sequences)  # (batch_size, vocab_size)
+            
+            # Apply repeat penalty to discourage repetition
+            next_scores = self._apply_repeat_penalty(next_scores, sequences, repeat_penalty)
+            
+            # Apply temperature scaling
+            next_scores = self._filter_logits(next_scores, temperature)
+            
+            # Convert to log probabilities
+            log_probs = torch.log_softmax(next_scores, dim=-1)
+            
+            # Select the most likely token (greedy selection)
+            next_tokens = torch.argmax(log_probs, dim=-1)  # (batch_size,)
+            
+            # Get the log probability of the selected tokens
+            token_scores = log_probs.gather(1, next_tokens.unsqueeze(1)).squeeze(1)  # (batch_size,)
+            
+            # Update scores only for unfinished sequences
+            scores = torch.where(finished, scores, scores + token_scores)
+            
+            # Append next tokens to sequences
+            sequences = torch.cat([sequences, next_tokens.unsqueeze(1)], dim=1)  # (batch_size, seq_len + 1)
+            
+            # Check if any sequence has reached EOS
+            is_eos = (next_tokens == self.tokenizer.eos_id)
+            finished = finished | is_eos
+        
+        return sequences, scores
 
     def generate_beam(
             self,

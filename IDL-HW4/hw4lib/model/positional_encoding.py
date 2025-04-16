@@ -42,9 +42,24 @@ class PositionalEncoding(nn.Module):
             - Initializes the positional encoding buffer 'pe' 
               of shape (1, max_len, d_model) (in order to broadcast with input tensor)
         """
-        # TODO: Implement create_pe_table
-        raise NotImplementedError # Remove once implemented
-        pe = NotImplementedError
+        # Create position matrix of shape (max_len, 1)
+        position = torch.arange(max_len).unsqueeze(1)
+        
+        # Create div_term matrix of shape (d_model/2,)
+        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model))
+        
+        # Initialize pe matrix of shape (max_len, d_model)
+        pe = torch.zeros(max_len, d_model)
+        
+        # Apply sine to even indices
+        pe[:, 0::2] = torch.sin(position * div_term)
+        
+        # Apply cosine to odd indices
+        pe[:, 1::2] = torch.cos(position * div_term)
+        
+        # Add batch dimension to make shape (1, max_len, d_model)
+        pe = pe.unsqueeze(0)
+        
         # Register as buffer to save with model state
         self.register_buffer('pe', pe)
         
@@ -66,4 +81,4 @@ class PositionalEncoding(nn.Module):
         if seq_len > self.pe.size(1):
             raise ValueError(f"Sequence length {seq_len} exceeds the maximum length {self.pe.size(1)}")
         # Step 3: Add positional encodings to input
-        raise NotImplementedError # Remove once implemented
+        return x + self.pe[:, :seq_len]

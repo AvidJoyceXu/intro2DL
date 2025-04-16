@@ -25,8 +25,22 @@ def PadMask(padded_input, input_lengths):
             - padding positions are marked with True 
             - non-padding positions are marked with False.
     """
-    # TODO: Implement PadMask
-    raise NotImplementedError # Remove once implemented
+    # Get the sequence length from the padded input
+    seq_length = padded_input.shape[1]
+    
+    # Create a tensor of indices for each position in the sequence
+    # Shape: (N, T)
+    indices = torch.arange(seq_length, device=padded_input.device).expand(len(input_lengths), seq_length)
+    
+    # Create a tensor of lengths for each sequence
+    # Shape: (N, 1)
+    lengths = input_lengths.unsqueeze(1)
+    
+    # Create the mask: True for positions >= sequence length (padding)
+    # Shape: (N, T)
+    mask = indices >= lengths
+    
+    return mask
 
 ''' 
 TODO: Implement this function.
@@ -51,6 +65,17 @@ def CausalMask(padded_input):
             - non-causal positions (don't attend to) are marked with True 
             - causal positions (can attend to) are marked with False.
     """
-    # TODO: Implement CausalMask
-    raise NotImplementedError # Remove once implemented
+    # Get the sequence length from the padded input
+    seq_length = padded_input.shape[1]
+    
+    # Create a tensor of indices for each position in the sequence
+    # Shape: (T, T)
+    row_indices = torch.arange(seq_length, device=padded_input.device).unsqueeze(1)
+    col_indices = torch.arange(seq_length, device=padded_input.device).unsqueeze(0)
+    
+    # Create the mask: True for positions where col > row (upper triangular excluding diagonal)
+    # Shape: (T, T)
+    mask = col_indices > row_indices
+    
+    return mask
 
