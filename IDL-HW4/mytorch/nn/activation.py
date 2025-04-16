@@ -20,19 +20,19 @@ class Softmax:
         if self.dim > len(Z.shape) or self.dim < -len(Z.shape):
             raise ValueError("Dimension to apply softmax to is greater than the number of dimensions in Z")
         
-        # TODO: Implement forward pass
         # Compute the softmax in a numerically stable way
-        # Apply it to the dimension specified by the `dim` parameter
-        self.A = NotImplementedError
-        raise NotImplementedError
+        # Shift the input to avoid overflow by subtracting the max value along the specified dimension
+        shifted_Z = Z - np.max(Z, axis=self.dim, keepdims=True)
+        exp_Z = np.exp(shifted_Z)
+        sum_exp_Z = np.sum(exp_Z, axis=self.dim, keepdims=True)
+        self.A = exp_Z / sum_exp_Z
+        return self.A
 
     def backward(self, dLdA):
         """
         :param dLdA: Gradient of loss wrt output
         :return: Gradient of loss with respect to activation input
         """
-        # TODO: Implement backward pass
-        
         # Get the shape of the input
         shape = self.A.shape
         # Find the dimension along which softmax was applied
@@ -40,16 +40,33 @@ class Softmax:
            
         # Reshape input to 2D
         if len(shape) > 2:
-            self.A = NotImplementedError
-            dLdA = NotImplementedError
+            # Reshape to (batch_size, C) for easier computation
+            A_reshaped = self.A.reshape(-1, C)
+            dLdA_reshaped = dLdA.reshape(-1, C)
+        else:
+            A_reshaped = self.A
+            dLdA_reshaped = dLdA
+
+        # Compute the Jacobian of softmax
+        # For each sample, we need to compute the Jacobian matrix
+        batch_size = A_reshaped.shape[0]
+        dLdZ_reshaped = np.zeros_like(A_reshaped)
+        
+        for i in range(batch_size):
+            a = A_reshaped[i]
+            # Compute the Jacobian matrix for this sample
+            # J[i,j] = a[i] * (1[i=j] - a[j])
+            J = np.diag(a) - np.outer(a, a)
+            dLdZ_reshaped[i] = np.dot(J, dLdA_reshaped[i])
 
         # Reshape back to original dimensions if necessary
         if len(shape) > 2:
             # Restore shapes to original
-            self.A = NotImplementedError
-            dLdZ = NotImplementedError
+            dLdZ = dLdZ_reshaped.reshape(shape)
+        else:
+            dLdZ = dLdZ_reshaped
 
-        raise NotImplementedError
+        return dLdZ
  
 
     
